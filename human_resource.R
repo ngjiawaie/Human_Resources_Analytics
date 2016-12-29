@@ -1,8 +1,25 @@
+#Dependencies
+install.packages("dplyr")
+install.packages("tidyr")
+install.packages("ggplot2")
+install.packages("ggvis")
+install.packages("corrplot")
+install.packages("DT")
+install.packages("caret")
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggvis)
+library(corrplot)
+library(DT)
+library(caret)
+
 #Load data
 data <- read.csv(file = "HR_comma_sep.csv")
 
-#Look at the internal structure of the data
+#Look at the internal structure and summary of the data
 str(data)
+summary(data)
 head(data)
 
 #Correct the column names
@@ -11,25 +28,32 @@ colnames(data)[names(data) == "time_spend_company"] <- "years_spent_in_company"
 colnames(data)[names(data) == "left"] <- "left_job"
 colnames(data)[names(data) == "average_montly_hours"] <- "average_monthly_hours"
 
-#Remove duplicates
+
+###Data Cleaning
+#Check and remove duplicates
 sum(duplicated(data)) #Number of duplicates
 data <- data[!duplicated(data),] #Remove
 
-any(is.na(data))
 #Check for NA
+any(is.na(data)) #Since no NAs, no imputation required. Moving on...
 
-#salary and number of projects to ppl who left
-library(dplyr)
-library(tidyr)
-library(ggplot2)
-library(ggvis)
-library(corrplot)
-library(DT)
+#Check for outliers
+boxplot(data$satisfaction_level)
+boxplot(data$last_evaluation)
+boxplot(data$number_project)
+boxplot(data$average_monthly_hours)
+boxplot(data$years_spent_in_company) #This shows some outliers
 
-#summary of data
-summary(data)
+#Further checking years_spent_in_company
+boxplot.stats(data$years_spent_in_company)
+levels(factor(data$years_spent_in_company)) #Looks okay, moving on
 
-##outlier
+
+###Data transformation
+#Box cox transform
+#preprocessParams <- preProcess(data[,1:8], method=c("BoxCox"))
+#data <- predict(preprocessParams, data[,1:8])
+#summary(data)
 
 #find the satisfaction level of ppl who left the job
 hr_hist <- data %>% filter(left_job==1)
