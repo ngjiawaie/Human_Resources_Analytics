@@ -6,6 +6,7 @@ install.packages("ggvis")
 install.packages("corrplot")
 install.packages("DT")
 install.packages("caret")
+install.packages("radarchart")
 library(dplyr)
 library(tidyr)
 library(ggplot2)
@@ -13,6 +14,7 @@ library(ggvis)
 library(corrplot)
 library(DT)
 library(caret)
+library(radarchart)
 
 #Load data
 data <- read.csv(file = "HR_comma_sep.csv")
@@ -55,6 +57,9 @@ levels(factor(data$years_spent_in_company)) #Looks okay, moving on
 #data <- predict(preprocessParams, data[,1:8])
 #summary(data)
 
+#First, we want to find the correlation of attributes in the dataset
+corrplot(cor(data[,1:8]), method="circle")
+
 #find the satisfaction level of ppl who left the job
 hr_hist <- data %>% filter(left_job==1)
 hist(hr_hist$satisfaction_level,col="#3090C7", main = "Satisfaction level : left job")
@@ -68,15 +73,23 @@ hist(hr_hist$satisfaction_level,col="#3090C7", main = "Satisfaction level : left
 #find the relationship between salary and ppl who left the job and >0.5 evaluation
 hr_bar <- data %>% filter(last_evaluation > 0.5, left_job==1)
 barplot(table(hr_bar$salary), col="#3090C7", main = "Salary : left job + >0.5 performance")
+#there are alot of people from low/medium salary group who left the job
 
-#which department has most high performing worker leaving their job
-hr_bar <- data %>% filter(last_evaluation > 0.5, left_job==1)
-barplot(table(hr_bar$department), col="#3090C7", main = "Department : left job + >0.5 performance")
+#which department has most high performing worker leaving their job(in number and percentages)
+hr_left <- data %>% filter(left_job==1, last_evaluation > 0.5)
 
-# we know that sales has the most number of worker left, hence we need to explore the what is the main cause of sales being the highest worker left
-hr_temp <- data %>% filter(last_evaluation > 0.5, left_job==1, department=="sales")
-hr_cor <- hr_temp %>% select(satisfaction_level:Work_accident, promotion_last_5years)
-plot <- cor(hr_cor)
-corrplot(plot, method="circle")
+left_stats <- hr_left %>% 
+  group_by(department) %>% 
+  summarize(left_counts = sum(left_job)) %>% 
+  mutate(perc_left = left_counts/sum(left_counts) *100)
 
+chartJSRadar(left_stats, showToolTipLabel = T)
+#sales department shows the highest number of people leaving thier job, is it just because sales department has too many workers? Or sales department has a higher percentage of employees quiting their job
 
+#we want to check all the department whether there exsist a department with a high percentage of employees quiting their job
+#aes fill is to get a clear picture of the ratio of workers who left their jobs and the total employees in certan department 
+ggplot(data,aes(department,fill=as.factor(left_job)))+geom_bar()
+#add geom_bar position fill make it easier to compare proportions
+ggplot(data,aes(department,fill=as.factor(left_job)))+geom_bar(position="fill")
+
+#summary: Although sales department shows a high number of employees quitting their jobs, but we found out that this is mainly due to the high number of employees in sales department. The ratio of total employees of the department to the employees of the department who left their jobs is quite balance among all the department.
