@@ -58,16 +58,18 @@ levels(factor(data$years_spent_in_company)) #Looks okay, moving on
 #find the satisfaction level of ppl who left the job
 hr_hist <- data %>% filter(left_job==1)
 hist(hr_hist$satisfaction_level,col="#3090C7", main = "Satisfaction level : left job")
+#as depicted, those who left have low satisfaction level, but we wouldn't wan't to keep everybody.
 
 #find the satisfaction level of ppl who left the job and have >0.5 evaluation(we need high performance worker, as we want high performance worker to stay)
 hr_hist <- hr_hist %>% filter(last_evaluation > 0.5, left_job==1)
 hist(hr_hist$satisfaction_level,col="#3090C7", main = "Satisfaction level : left job + >0.5 performance")
+#Oddly enough, there is quite a number of competent workers(evaluation > 0.5) with moderate to high satisfaction toward the company who left still.
 
 #find the relationship between salary and ppl who left the job and >0.5 evaluation
 hr_bar <- data %>% filter(last_evaluation > 0.5, left_job==1)
 barplot(table(hr_bar$salary), col="#3090C7", main = "Salary : left job + >0.5 performance")
 
-#which department has most high performance worker left their job
+#which department has most high performing worker leaving their job
 hr_bar <- data %>% filter(last_evaluation > 0.5, left_job==1)
 barplot(table(hr_bar$department), col="#3090C7", main = "Department : left job + >0.5 performance")
 
