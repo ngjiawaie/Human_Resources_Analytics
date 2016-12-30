@@ -44,9 +44,12 @@ any(is.na(data)) #Since no NAs, no imputation required. Moving on...
 preprocessParams <- preProcess(data[,1:8], method=c("range"))
 normData <- predict(preprocessParams, data[,1:8])
 #Without normalize, the boxplot looks like this
-boxplot(data[1:5], names = names(data[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A"))
+default <- par("mar")
+par(mar=c(10,11,3,1)) #Text labels are out of bound, fixed by changing the par(mar()) value.
+boxplot(data[1:5], names = names(data[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A"), horizontal = T, main="Checking for outliers (Data without normalizing)")
 #With normalize
-boxplot(normData[1:5], names = names(normData[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A"))
+boxplot(normData[1:5], names = names(normData[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A"), horizontal = T, main="Checking for outliers (Data normalized)")
+par(mar=default)
 #years_spent_in_company has some outliers shown in the boxplot, examining it...
 (outliers <- levels(factor(boxplot.stats(data[,'years_spent_in_company'])$out)))
 (oriValues <- levels(factor(data[,'years_spent_in_company'])))  #The outliers are legit data, moving on...
