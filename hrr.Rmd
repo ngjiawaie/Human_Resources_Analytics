@@ -154,6 +154,6 @@ hist(hr_hist$satisfaction_level,col="#3090C7", main = "Satisfaction level : left
 
 
 ```{r, include=FALSE}
-   file.rename(from="hrr.md", 
+   file.rename(from="hrr.Rmd", 
                to="README.md")
 ```
