@@ -40,22 +40,16 @@ data <- data[!duplicated(data),] #Remove
 any(is.na(data)) #Since no NAs, no imputation required. Moving on...
 
 #Check for outliers
-boxplot(data$satisfaction_level)
-boxplot(data$last_evaluation)
-boxplot(data$number_project)
-boxplot(data$average_monthly_hours)
-boxplot(data$years_spent_in_company) #This shows some outliers
-
-#Further checking years_spent_in_company
-boxplot.stats(data$years_spent_in_company)
-levels(factor(data$years_spent_in_company)) #Looks okay, moving on
-
-
-###Data transformation
-#Box cox transform
-#preprocessParams <- preProcess(data[,1:8], method=c("BoxCox"))
-#data <- predict(preprocessParams, data[,1:8])
-#summary(data)
+#Normalize the data
+preprocessParams <- preProcess(data[,1:8], method=c("range"))
+normData <- predict(preprocessParams, data[,1:8])
+#Without normalize, the boxplot looks like this
+boxplot(data[1:5], names = names(data[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A"))
+#With normalize
+boxplot(normData[1:5], names = names(normData[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A"))
+#years_spent_in_company has some outliers shown in the boxplot, examining it...
+(outliers <- levels(factor(boxplot.stats(data[,'years_spent_in_company'])$out)))
+(oriValues <- levels(factor(data[,'years_spent_in_company'])))  #The outliers are legit data, moving on...
 
 #First, we want to find the correlation of attributes in the dataset
 corrplot(cor(data[,1:8]), method="circle")
