@@ -23,7 +23,7 @@ data <- read.csv(file = "HR_comma_sep.csv")
 
 This dataset is related to the record of the employees in the company. This dataset contains 14999 rows and 10 columns. The dataset describes the satisfaction level of the company, last evaluation of their performance, number of projects they done, their average monthly working hours, the number of years spent in the company, whether the employee had a workplace accident, whether the employee left the workspace, their last promotion, the sales and the salary level.
 <hr>
-##Characteristic & Sumarry of Dataset
+##Characteristic & Sumarry of Dataset 
 In this figure below, it shows the correlation of each variables with few example of record. For example, each employee work on 3 to 4 projects in a year with around 200 hours per month.
 ```{r}
 str(data)
@@ -31,7 +31,7 @@ summary(data)
 head(data)
 ```
 <hr>
-##Preprocessing of Dataset
+##Data Preprocessing {.tabset .tabset-fade .tabset-pills}
 In the figure below contain some preprocessing work that we had done.
 ```{r eval=FALSE}
 colnames(data)[names(data) == "sales"] <- "department"
@@ -44,4 +44,40 @@ Current dataset will be look like this:
 ```{r echo=FALSE}
 head(data)
 ```
+###Data Cleaning {.tabset}
+We had done some data cleaning works such as remove duplicate data, check for NA and check for outliner. 
+
+####Remove Duplicate
+Previously, we have 14999 record.
+```{r echo=FALSE}
+dim(data)
+```
+Duplicate record :
+```{r echo=FALSE}
+sum(duplicated(data))
+data <- data[!duplicated(data),]
+```
+After remove duplicate entries, we had left 11991 record.
+```{r echo=FALSE}
+dim(data)
+```
+
+####Check For NA
+We had also check for any not available value contain in each variable
+```{r}
+any(is.na(data))
+```
+Since there isn't any NA contain in the dataset, hence no imputation required.
+<br>
+
+####Check For Outliner
+We had check for outliners in each column of data set, and result will be shown below:
+
+```{r, echo=FALSE}
+boxplot(data$satisfaction_level)
+boxplot(data$last_evaluation)
+boxplot(data$number_project)
+```
+
+
 
