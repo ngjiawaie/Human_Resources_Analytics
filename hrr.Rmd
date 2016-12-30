@@ -1,0 +1,47 @@
+---
+title: "Human Resources Analytics"
+author: "Ng Jia Waie"
+date: "December 30, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE)
+```
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(ggvis)
+library(corrplot)
+library(DT)
+library(caret)
+library(radarchart)
+data <- read.csv(file = "HR_comma_sep.csv")
+```
+
+This dataset is related to the record of the employees in the company. This dataset contains 14999 rows and 10 columns. The dataset describes the satisfaction level of the company, last evaluation of their performance, number of projects they done, their average monthly working hours, the number of years spent in the company, whether the employee had a workplace accident, whether the employee left the workspace, their last promotion, the sales and the salary level.
+<hr>
+##Characteristic & Sumarry of Dataset
+In this figure below, it shows the correlation of each variables with few example of record. For example, each employee work on 3 to 4 projects in a year with around 200 hours per month.
+```{r}
+str(data)
+summary(data)
+head(data)
+```
+<hr>
+##Preprocessing of Dataset
+In the figure below contain some preprocessing work that we had done.
+```{r eval=FALSE}
+colnames(data)[names(data) == "sales"] <- "department"
+colnames(data)[names(data) == "time_spend_company"] <- "years_spent_in_company"
+colnames(data)[names(data) == "left"] <- "left_job"
+colnames(data)[names(data) == "average_montly_hours"] <- "average_monthly_hours"
+```
+<br>
+Current dataset will be look like this:
+```{r echo=FALSE}
+head(data)
+```
+
