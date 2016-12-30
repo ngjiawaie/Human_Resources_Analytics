@@ -1,3 +1,6 @@
+#Please redirect to this link to have a better view of the document:
+#https://ngjiawaie.github.io/Human_Resources_Analytics/
+
 # Human Resources Analytics
 Ng Jia Waie  
 December 30, 2016  
