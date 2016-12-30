@@ -19,6 +19,10 @@ library(DT)
 library(caret)
 library(radarchart)
 data <- read.csv(file = "HR_comma_sep.csv")
+colnames(data)[names(data) == "sales"] <- "department"
+colnames(data)[names(data) == "time_spend_company"] <- "years_spent_in_company"
+colnames(data)[names(data) == "left"] <- "left_job"
+colnames(data)[names(data) == "average_montly_hours"] <- "average_monthly_hours"
 ```
 ##Data Collection
 This dataset is related to the record of the employees in the company. This dataset contains 14999 rows and 10 columns. The dataset describes the satisfaction level of the company, last evaluation of their performance, number of projects they done, their average monthly working hours, the number of years spent in the company, whether the employee had a workplace accident, whether the employee left the workspace, their last promotion, the sales and the salary level.
@@ -34,6 +38,7 @@ corrplot(cor(data[,1:8]), method="circle")
 ```
 <hr>
 
+
 ##Data Preprocessing {.tabset .tabset-fade .tabset-pills}
 In this section, we will transform raw data into an understandable format where raw data often incomplete, inconsistent, and/or lacking in certain behaviors or trends, and is likely to contain many errors.
 
@@ -45,7 +50,7 @@ preprocessParams <- preProcess(data[,1:8], method=c("range"))
 normData <- predict(preprocessParams, data[,1:8])
 
 ```
-
+<hr>
 
 ###Data Cleaning {.tabset}
 We had done some data cleaning works such as remove duplicate data, check for NA and check for outliner. 
@@ -63,6 +68,7 @@ Current dataset will be look like this:
 ```{r echo=FALSE}
 head(data)
 ```
+<hr>
 
 ####Remove Duplicate
 Previously, we have 14999 record.
@@ -78,6 +84,7 @@ After remove duplicate entries, we had left 11991 record.
 ```{r echo=FALSE}
 dim(data)
 ```
+<hr>
 
 ####Check For NA
 We had also check for any not available value contain in each variable
@@ -86,6 +93,7 @@ any(is.na(data))
 ```
 Since there isn't any NA contain in the dataset, hence no imputation required.
 <br>
+<hr>
 
 ####Check For Outlier
 We had check for outlier in each column of data set for both before normalize and after normalize and result will be shown below:
@@ -93,20 +101,20 @@ We had check for outlier in each column of data set for both before normalize an
 <br>
 Below is the graph of outlier before normalize:
 ```{r, echo=FALSE}
+default <- par("mar")
+par(mar=c(10,11,3,1))
 preprocessParams <- preProcess(data[,1:8], method=c("range"))
 normData <- predict(preprocessParams, data[,1:8])
-boxplot(data[1:5], names = names(data[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A") ,horizontal = F)
+boxplot(data[1:5], names = names(data[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A"), horizontal = T, main="Checking for outliers (Data without normalizing)")
 ```
-<br>
-<br>
 
 Below is the graph of outlier after normalize:
 ```{r, echo=FALSE, }
-boxplot(normData[1:5], names = names(normData[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A") ,horizontal = F)
+default <- par("mar")
+par(mar=c(10,11,3,1))
+boxplot(normData[1:5], names = names(normData[1:5]), las = 2, col = c("#7E57C2","#42A5F5","#9CCC65","#EA80FC","#EC407A"), horizontal = T, main="Checking for outliers (Data normalized)")
+par(mar=default)
 ```
-<br>
-<br>
-
 Although that we based on the graph above show that years spent in company contain some outlier, but after examine the code below, we conclude that those outlier is valid for the variable.
 ```{r eval=FALSE}
 (outliers <- levels(factor(boxplot.stats(data[,'years_spent_in_company'])$out)))
@@ -115,17 +123,21 @@ Although that we based on the graph above show that years spent in company conta
 <br>
 <br>
 <hr>
-##Data Analysis {.tabset .tabset-fade .tabset-pills}
+
+
+###Data Reduction {.tabset}
+After we remove duplicate record, we found out that our record isn't very big. We decided not to do data sampling due to if we sampling the data, and it might affect our data analysis part.
+<br>
+<strong>Sampling data in our case is optional.<strong>
+<hr>
+
+
+##Data Analysis
 In the figure below, we had done some analysis steps to get meaningful information from the dataset.
 
 
-###
-
 ###Satisfaction Level
-In this part, we want to found out relationship between Satisfaction Level and people who left job
-
-####Left Job
-In this part, we found out that those who left have low satisfaction level contain the most compare other satisfaction level.
+   In this part, we want to found out relationship between Satisfaction Level and people who left job and we found out that those who left have low satisfaction level contain the most compare other satisfaction level.
 
 ```{r echo=FALSE}
 hr_hist <- data %>% filter(left_job==1)
